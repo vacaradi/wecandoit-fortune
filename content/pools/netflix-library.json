@@ -1,0 +1,661 @@
+{
+  "_설명": "링크가 실제로 열리는 것을 확인한 넷플릭스 작품 목록입니다. netflix-picker 에이전트가 여기서 먼저 고르고, 새로 검증한 작품은 여기에 추가합니다.",
+  "_주의": "넷플릭스는 판권 만료로 작품을 수시로 내립니다. 월 1회 링크 점검이 필요합니다. original: true 인 작품은 내려갈 위험이 낮습니다.",
+  "_검증방법": "https://www.netflix.com/title/{id} 를 열어 작품명이 일치하는지 확인",
+  "_제외기록": "성난 사람들(Beef), 무브 투 헤븐 — 링크는 정상이나 자살·자해 소재가 있어 safety-guide 7번 규칙에 따라 제외",
+  "lastChecked": "2026-08-13",
+  "titles": [
+    {
+      "title": "에밀리, 파리에 가다",
+      "id": "81037371",
+      "type": "시리즈",
+      "genre": "로맨틱 코미디",
+      "original": true,
+      "mood": [
+        "가벼움",
+        "기분전환"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "나의 해방일지",
+      "id": "81568411",
+      "type": "시리즈",
+      "genre": "드라마",
+      "original": false,
+      "mood": [
+        "권태",
+        "위로"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "더 글로리",
+      "id": "81519223",
+      "type": "시리즈",
+      "genre": "복수 스릴러",
+      "original": true,
+      "mood": [
+        "대리복수",
+        "통쾌"
+      ],
+      "allAges": false
+    },
+    {
+      "title": "흑백요리사",
+      "id": "81728365",
+      "type": "시리즈",
+      "genre": "요리 서바이벌",
+      "original": true,
+      "mood": [
+        "몰입",
+        "식욕"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "살인자ㅇ난감",
+      "id": "81607354",
+      "type": "시리즈",
+      "genre": "블랙 코미디",
+      "original": true,
+      "mood": [
+        "실수",
+        "안도"
+      ],
+      "allAges": false
+    },
+    {
+      "title": "블랙 미러",
+      "id": "70264888",
+      "type": "시리즈",
+      "genre": "SF 앤솔로지",
+      "original": true,
+      "mood": [
+        "단편",
+        "부담없음"
+      ],
+      "allAges": false
+    },
+    {
+      "title": "폭싹 속았수다",
+      "id": "81681535",
+      "type": "시리즈",
+      "genre": "시대극",
+      "original": true,
+      "mood": [
+        "회한",
+        "따뜻함"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "종이의 집",
+      "id": "80192098",
+      "type": "시리즈",
+      "genre": "범죄 스릴러",
+      "original": true,
+      "mood": [
+        "대리만족",
+        "돈"
+      ],
+      "allAges": false
+    },
+    {
+      "title": "기묘한 이야기",
+      "id": "80057281",
+      "type": "시리즈",
+      "genre": "SF 미스터리",
+      "original": true,
+      "mood": [
+        "미스터리",
+        "기계"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "퀸스 갬빗",
+      "id": "80234304",
+      "type": "시리즈",
+      "genre": "드라마",
+      "original": true,
+      "mood": [
+        "몰입",
+        "성취"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "D.P.",
+      "id": "81280917",
+      "type": "시리즈",
+      "genre": "드라마",
+      "original": true,
+      "mood": [
+        "추격",
+        "답답함해소"
+      ],
+      "allAges": false
+    },
+    {
+      "title": "이태원 클라쓰",
+      "id": "81193309",
+      "type": "시리즈",
+      "genre": "드라마",
+      "original": false,
+      "mood": [
+        "음식",
+        "성장"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "더 크라운",
+      "id": "80025678",
+      "type": "시리즈",
+      "genre": "시대극",
+      "original": true,
+      "mood": [
+        "품격",
+        "위로"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "나의 아저씨",
+      "id": "81267691",
+      "type": "시리즈",
+      "genre": "드라마",
+      "original": false,
+      "mood": [
+        "위로",
+        "잔잔함"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "슬기로운 의사생활",
+      "id": "81239224",
+      "type": "시리즈",
+      "genre": "드라마",
+      "original": false,
+      "mood": [
+        "훈훈함",
+        "일상"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "우리들의 블루스",
+      "id": "81568842",
+      "type": "시리즈",
+      "genre": "옴니버스 드라마",
+      "original": false,
+      "mood": [
+        "인생",
+        "눈물"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "나빌레라",
+      "id": "81403966",
+      "type": "시리즈",
+      "genre": "드라마",
+      "original": false,
+      "mood": [
+        "도전",
+        "뭉클함"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "눈물의 여왕",
+      "id": "81707950",
+      "type": "시리즈",
+      "genre": "로맨스",
+      "original": false,
+      "mood": [
+        "로맨스",
+        "눈물"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "갯마을 차차차",
+      "id": "81473182",
+      "type": "시리즈",
+      "genre": "로맨틱 코미디",
+      "original": false,
+      "mood": [
+        "힐링",
+        "가벼움"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "스타트업",
+      "id": "81290293",
+      "type": "시리즈",
+      "genre": "드라마",
+      "original": false,
+      "mood": [
+        "성장",
+        "응원"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "도깨비",
+      "id": "81012510",
+      "type": "시리즈",
+      "genre": "판타지 로맨스",
+      "original": false,
+      "mood": [
+        "로맨스",
+        "판타지"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "사랑의 불시착",
+      "id": "81159258",
+      "type": "시리즈",
+      "genre": "로맨스",
+      "original": false,
+      "mood": [
+        "설렘",
+        "몰입"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "피지컬: 100",
+      "id": "81587446",
+      "type": "시리즈",
+      "genre": "서바이벌 예능",
+      "original": true,
+      "mood": [
+        "몰입",
+        "성취"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "셰프의 테이블",
+      "id": "80007945",
+      "type": "시리즈",
+      "genre": "요리 다큐멘터리",
+      "original": true,
+      "mood": [
+        "식욕",
+        "영감"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "우리의 지구",
+      "id": "80049832",
+      "type": "시리즈",
+      "genre": "자연 다큐멘터리",
+      "original": true,
+      "mood": [
+        "힐링",
+        "자연"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "클라우스",
+      "id": "80183187",
+      "type": "영화",
+      "genre": "애니메이션",
+      "original": true,
+      "mood": [
+        "따뜻함",
+        "가족"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "미첼 가족과 기계 전쟁",
+      "id": "81399614",
+      "type": "영화",
+      "genre": "애니메이션",
+      "original": true,
+      "mood": [
+        "웃김",
+        "가족"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "오버 더 문",
+      "id": "80214236",
+      "type": "영화",
+      "genre": "애니메이션",
+      "original": true,
+      "mood": [
+        "모험",
+        "가족"
+      ],
+      "allAges": true
+    },
+    {
+      "title": "나르코스",
+      "id": "80025172",
+      "type": "시리즈",
+      "genre": "범죄 드라마",
+      "original": true,
+      "mood": [
+        "몰입",
+        "긴장"
+      ],
+      "allAges": false
+    },
+    {
+      "title": "위쳐",
+      "id": "80189685",
+      "type": "시리즈",
+      "genre": "판타지",
+      "original": true,
+      "mood": [
+        "모험",
+        "몰입"
+      ],
+      "allAges": false
+    },
+    {
+      "title": "브리저튼",
+      "id": "80232398",
+      "type": "시리즈",
+      "genre": "로맨스",
+      "original": true,
+      "mood": [
+        "설렘",
+        "화려함"
+      ],
+      "allAges": false
+    },
+    {
+      "title": "나이브스 아웃: 글래스 어니언",
+      "id": "81458416",
+      "type": "영화",
+      "genre": "미스터리",
+      "original": true,
+      "mood": [
+        "몰입",
+        "반전"
+      ],
+      "allAges": false
+    },
+    {
+      "title": "그리셀다",
+      "id": "81133447",
+      "type": "시리즈",
+      "genre": "범죄 드라마",
+      "original": true,
+      "mood": [
+        "몰입",
+        "대리만족"
+      ],
+      "allAges": false
+    },
+    {
+      "title": "아케인",
+      "id": "81435684",
+      "type": "시리즈",
+      "genre": "SF 애니메이션",
+      "original": true,
+      "mood": [
+        "몰입",
+        "비주얼"
+      ],
+      "allAges": false
+    },
+    {
+      "title": "오티스의 비밀상담소",
+      "id": "80197526",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": false
+    },
+    {
+      "title": "하트스토퍼",
+      "id": "81059939",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": true
+    },
+    {
+      "title": "굿 플레이스",
+      "id": "80113701",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": true
+    },
+    {
+      "title": "미드나잇 다이너",
+      "id": "80113541",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": true
+    },
+    {
+      "title": "어글리 딜리셔스",
+      "id": "80170368",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": true
+    },
+    {
+      "title": "너의 이름은",
+      "id": "80161371",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": true
+    },
+    {
+      "title": "킹덤",
+      "id": "80180171",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": false
+    },
+    {
+      "title": "소년심판",
+      "id": "81312802",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": false
+    },
+    {
+      "title": "수리남",
+      "id": "81343748",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": false
+    },
+    {
+      "title": "웬즈데이",
+      "id": "81231974",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": true
+    },
+    {
+      "title": "마스크걸",
+      "id": "81516491",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": false
+    },
+    {
+      "title": "오징어 게임",
+      "id": "81040344",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": false
+    },
+    {
+      "title": "지옥",
+      "id": "81256675",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": false
+    },
+    {
+      "title": "더 에이트 쇼",
+      "id": "81719583",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": false
+    },
+    {
+      "title": "익스트랙션",
+      "id": "80230399",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": false
+    },
+    {
+      "title": "레드 노티스",
+      "id": "81161626",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": true
+    },
+    {
+      "title": "그레이 맨",
+      "id": "81160697",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": false
+    },
+    {
+      "title": "사이렌: 불꽃의 섬",
+      "id": "81631016",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": false
+    },
+    {
+      "title": "인사이드 빌 게이츠",
+      "id": "80184771",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": true
+    },
+    {
+      "title": "워런 버핏 되기",
+      "id": "80180154",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": true
+    },
+    {
+      "title": "마이클 조던: 더 라스트 댄스",
+      "id": "80203144",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": true
+    },
+    {
+      "title": "크립 캠프: 장애는 없다",
+      "id": "81001496",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": true
+    },
+    {
+      "title": "앤디 워홀 다이어리",
+      "id": "81026142",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": false
+    },
+    {
+      "title": "아인슈타인과 원자폭탄",
+      "id": "81474469",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": true
+    },
+    {
+      "title": "펠레",
+      "id": "81074673",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": true
+    },
+    {
+      "title": "다빈치의 악마",
+      "id": "70269556",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": false
+    },
+    {
+      "title": "보헤미안 랩소디",
+      "id": "80994899",
+      "type": "시리즈",
+      "genre": "",
+      "original": false,
+      "mood": [],
+      "allAges": true
+    }
+  ],
+  "_출처": "일부는 예전 위캔두잇 운세 앱(wecandoit_fortune)에서 가져왔습니다."
+}

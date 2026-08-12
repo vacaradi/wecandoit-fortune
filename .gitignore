@@ -1,0 +1,21 @@
+# 배포 산출물 — Netlify가 빌드해서 만들므로 저장소에 두지 않는다
+dist/
+
+# 원본 영상 — 용량이 크고 웹에는 압축본만 쓴다
+assets/video/source/
+
+# 자동 생성 파일
+web/preview-online.html
+
+# 임시·개인 파일
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+.venv/
+__pycache__/
+*.pyc
+
+# 로컬 설정
+.env
+.env.*

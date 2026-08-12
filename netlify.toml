@@ -1,0 +1,32 @@
+# Netlify 배포 설정
+# GitHub에 push 하면 이 설정대로 자동 빌드·배포된다.
+
+[build]
+  # dist 폴더를 만드는 스크립트
+  command = "python3 scripts/build-deploy.py"
+  publish = "dist"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
+
+# 영상·이미지는 오래 캐시하고, HTML 과 콘텐츠는 항상 새로 받게 한다
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/content/*"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
