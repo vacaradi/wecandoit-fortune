@@ -291,12 +291,19 @@ h2{
 }
 .derived span{font-size:13px;color:var(--muted);letter-spacing:.04em}
 
-/* 홈 화면 설치 안내 */
+/* 인트로 아래 작은 글자 줄 */
+.mini-row{
+  display:flex;justify-content:center;align-items:center;gap:10px;
+  margin-top:16px;
+}
+.mini-dot{color:var(--muted);opacity:.5;font-size:11px}
+
+/* 설치 안내 — 눌렀을 때만 나옵니다 */
 .install-tip{
   margin-top:12px;padding:14px var(--s2);
   border:1px solid var(--line);
   font-size:13px;line-height:1.75;color:var(--muted);
-  word-break:keep-all;
+  word-break:keep-all;text-align:center;
 }
 .install-tip b{color:var(--gold);font-weight:600}
 
@@ -719,12 +726,12 @@ h2{
 
     <div class="pad-t">
       <button class="btn" onclick="SFX.unlock();SFX.click();go(1)">오늘의 운세 시작</button>
-      <button class="btn ghost" id="installBtn" hidden
-              onclick="installApp()">홈 화면에 앱으로 두기</button>
-      <p class="install-tip" id="installTip" hidden></p>
-      <p style="text-align:center;margin-top:14px">
+      <p class="mini-row">
+        <button type="button" id="installBtn" class="snd" onclick="installApp()">앱으로 설치</button>
+        <span class="mini-dot">·</span>
         <button type="button" id="sndToggle" class="snd">소리 켜기</button>
       </p>
+      <p class="install-tip" id="installTip" hidden></p>
     </div>
   </section>
 
@@ -2358,7 +2365,6 @@ let deferredInstall=null;
 window.addEventListener("beforeinstallprompt",e=>{
   e.preventDefault();
   deferredInstall=e;
-  $("installBtn").hidden=false;
 });
 
 function showTip(html){
@@ -2368,11 +2374,19 @@ function showTip(html){
 
 async function installApp(){
   const btn=$("installBtn");
+  SFX.click();
 
-  // 설치 권한이 없으면 직접 하는 방법을 알려줍니다
+  // 설치 권한이 없으면 기기에 맞는 방법을 알려줍니다
   if(!deferredInstall){
-    showTip("브라우저 <b>메뉴(⋮)</b>를 열고 "+
-            "<b>앱 설치</b> 또는 <b>홈 화면에 추가</b>를 눌러주세요.");
+    const ua=navigator.userAgent;
+    if(/iPhone|iPad|iPod/.test(ua)){
+      showTip(/CriOS|FxiOS|EdgiOS/.test(ua)
+        ? "<b>Safari</b>로 열면 홈 화면에 둘 수 있습니다."
+        : "아래 <b>공유 버튼</b>을 누르고 <b>홈 화면에 추가</b>를 고르세요.");
+    }else{
+      showTip("브라우저 <b>메뉴(⋮)</b>를 열고 "+
+              "<b>앱 설치</b> 또는 <b>홈 화면에 추가</b>를 눌러주세요.");
+    }
     return;
   }
 
@@ -2400,23 +2414,17 @@ window.addEventListener("appinstalled",()=>{
   showTip("홈 화면에 추가했습니다. <b>아이콘으로 열어보세요.</b>");
 });
 
-(function installHint(){
+// 이미 앱으로 실행 중이면 설치 버튼을 숨깁니다
+(function hideIfInstalled(){
   const standalone=window.matchMedia("(display-mode: standalone)").matches
                  || window.navigator.standalone===true;
-  if(standalone) return;                      // 이미 앱으로 실행 중
-
-  const ua=navigator.userAgent;
-  const isIOS=/iPhone|iPad|iPod/.test(ua);
-  const isSafari=isIOS&&!/CriOS|FxiOS|EdgiOS/.test(ua);
-  const tip=$("installTip");
-
-  if(isIOS&&isSafari){
-    tip.innerHTML="아래 <b>공유 버튼</b>을 누르고 "+
-                  "<b>홈 화면에 추가</b>를 고르면 앱처럼 쓸 수 있습니다.";
-    tip.hidden=false;
-  }else if(isIOS){
-    tip.innerHTML="<b>Safari</b>로 열면 홈 화면에 앱으로 둘 수 있습니다.";
-    tip.hidden=false;
+  if(standalone){
+    const b=$("installBtn");
+    if(b){
+      b.hidden=true;
+      const dot=document.querySelector(".mini-dot");
+      if(dot) dot.hidden=true;
+    }
   }
 })();
 
