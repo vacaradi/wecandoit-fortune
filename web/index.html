@@ -609,6 +609,48 @@ h2{
 }
 .tile-wrap:hover .tile-cap,.tile-wrap:focus-visible .tile-cap{color:var(--text)}
 
+/* ── 기업 홈페이지 문의 박스 ──────────── */
+.promo{
+  display:flex;flex-direction:column;align-items:center;
+  margin-top:var(--s3);
+  padding:var(--s4) var(--s3);
+  background:linear-gradient(168deg,#0E1226 0%,#05070E 60%,#0B0E1C 100%);
+  border:1px solid var(--gold-deep);
+  text-decoration:none;
+  text-align:center;
+  transition:border-color 350ms var(--ease),background 350ms var(--ease);
+}
+.promo:hover,.promo:focus-visible{
+  border-color:var(--gold);
+  background:linear-gradient(168deg,#121734 0%,#070913 60%,#0E1224 100%);
+}
+.promo:focus-visible{outline:2px solid var(--orb);outline-offset:3px}
+
+.promo-eyebrow{
+  font-size:10px;letter-spacing:.26em;color:var(--muted);
+}
+.promo-title{
+  margin-top:14px;
+  font-family:var(--font-serif);
+  font-size:clamp(22px,5.6vw,28px);color:var(--text);
+  line-height:1.4;
+}
+.promo-desc{
+  margin-top:14px;
+  font-size:13px;line-height:1.85;color:var(--muted);
+  word-break:keep-all;
+}
+.promo-cta{
+  margin-top:var(--s3);
+  padding:11px 22px;
+  border:1px solid var(--gold-deep);
+  font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--gold);
+  transition:background 350ms var(--ease),color 350ms var(--ease);
+}
+.promo:hover .promo-cta,.promo:focus-visible .promo-cta{
+  background:var(--gold);color:var(--ink);border-color:var(--gold);
+}
+
 /* 흰 타일 위에 로고만. 글자도 덧대는 판도 두지 않습니다. */
 .tile img,.tile .tile-ico{
   display:flex;align-items:center;justify-content:center;
@@ -1044,6 +1086,16 @@ h2{
         <span class="tile-cap">콘텐츠 협업 문의</span>
       </a>
     </div>
+
+    <a class="promo" href="https://www.wecandoitlab.co.kr/home_" target="_blank" rel="noopener noreferrer">
+      <span class="promo-eyebrow">WE CAN DO IT</span>
+      <span class="promo-title">기업 홈페이지 문의</span>
+      <span class="promo-desc">
+        이런 웹앱이 필요하신가요<br>
+        기획부터 배포까지 만들어 드립니다
+      </span>
+      <span class="promo-cta">문의하러 가기 ↗</span>
+    </a>
 
     <div class="stack" style="margin-top:var(--s3)">
       <button class="btn ghost" onclick="back()">이전으로</button>
