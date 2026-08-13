@@ -1486,8 +1486,9 @@ function setStageVideo(n){
   heroA.classList.toggle("active",!useAlt);
   heroB.classList.toggle("active",useAlt);
   stage.classList.toggle("tall",useAlt);
-  // 소리 설정을 두 영상에 똑같이 적용합니다
-  const snd=(typeof SFX!=="undefined")&&SFX.isOn();
+  // 사용자가 화면을 건드리기 전에는 음소거를 유지합니다.
+  // 안 그러면 브라우저가 자동재생을 막고 재생 버튼이 뜹니다.
+  const snd=(typeof SFX!=="undefined")&&SFX.isOn()&&SFX.isUnlocked();
   [heroA,heroB].forEach(v=>{ v.muted=!snd; v.volume=0.7; });
 
   if(useAlt){
@@ -1673,18 +1674,30 @@ const LUCK={
 // ── 내 주변 식당 찾기 ────────────────────
 // 위치를 허락하면 반경 1km 안 실제 식당을 골라주고,
 // 거절하거나 실패하면 위 목록에서 뽑은 음식이 그대로 남습니다.
+// 지도 파일이 늦게 도착할 수 있어 잠시 기다렸다 다시 확인합니다
 const KAKAO_READY=new Promise(res=>{
-  if(!window.kakao||!window.kakao.maps) return res(false);
-  try{ kakao.maps.load(()=>res(true)); }catch(e){ res(false); }
+  let tries=0;
+  (function wait(){
+    if(window.kakao&&window.kakao.maps){
+      try{ kakao.maps.load(()=>res(true)); }catch(e){ res(false); }
+      return;
+    }
+    if(++tries>40) return res(false);   // 약 8초
+    setTimeout(wait,200);
+  })();
 });
 
 function myPosition(){
   return new Promise(res=>{
     if(!navigator.geolocation) return res(null);
+    let done=false;
+    const finish=v=>{ if(!done){ done=true; res(v); } };
+    // 폰이 느릴 때가 있어 넉넉히 기다립니다
+    setTimeout(()=>finish(null),15000);
     navigator.geolocation.getCurrentPosition(
-      p=>res(p.coords),
-      ()=>res(null),
-      {timeout:8000,maximumAge:600000,enableHighAccuracy:false}
+      p=>finish(p.coords),
+      ()=>finish(null),
+      {timeout:14000,maximumAge:300000,enableHighAccuracy:false}
     );
   });
 }
@@ -2401,8 +2414,12 @@ const SFX=(function(){
 
   // 배경음은 영상 자체의 소리를 씁니다.
   // 인공 앰비언트를 같이 틀면 영상 소리와 겹쳐서 지저분해집니다.
+  // 사용자가 화면을 한 번 건드리기 전에는 음소거를 풀면 안 됩니다.
+  // 풀면 브라우저가 자동재생을 막고 재생 버튼을 띄웁니다.
+  let unlocked=false;
+
   function applyVideoSound(){
-    const want=on;
+    const want=on&&unlocked;
     [document.getElementById("hero"),document.getElementById("hero2")]
       .forEach(v=>{ if(v){ v.muted=!want; v.volume=0.7; } });
     // 음소거를 풀면 재생이 멈추는 브라우저가 있어 다시 돌려줍니다
@@ -2412,9 +2429,11 @@ const SFX=(function(){
 
   return {
     unlock(){
+      unlocked=true;
       if(ensure()&&ac.state==="suspended") ac.resume();
       applyVideoSound();
     },
+    isUnlocked(){ return unlocked; },
     isOn(){ return on; },
     toggle(){
       on=!on;
