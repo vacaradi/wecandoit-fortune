@@ -382,8 +382,15 @@ h2{
 /* ── 오늘의 사람 ──────────────────────── */
 .people{display:flex;flex-direction:column;gap:var(--s2)}
 .person{
-  display:grid;grid-template-columns:70px 1fr;gap:12px;align-items:baseline;
+  /* 띠 이름 길이가 제각각이라(범띠·원숭이띠) 고정폭을 주면 글자가 겹칩니다.
+     내용에 맞춰 늘어나되 최소 폭만 잡아둡니다. */
+  display:grid;grid-template-columns:minmax(72px,max-content) 1fr;
+  gap:6px 12px;align-items:baseline;
   padding:12px 0;border-top:1px solid var(--line);
+}
+/* 좁은 화면에서는 아예 위아래로 나눕니다 */
+@media (max-width:420px){
+  .person{grid-template-columns:1fr}
 }
 .person:first-child{border-top:0;padding-top:0}
 .person b{
@@ -413,12 +420,16 @@ h2{
 /* ── 정보줄 ───────────────────────────── */
 .rows{display:flex;flex-direction:column;gap:var(--s1);margin-top:var(--s3)}
 .row{
-  display:flex;justify-content:space-between;gap:var(--s2);
+  display:flex;justify-content:space-between;align-items:baseline;
+  gap:var(--s2);flex-wrap:wrap;
   padding:13px 0;border-top:1px solid var(--line);
   font-size:14px;
 }
-.row dt{color:var(--muted);letter-spacing:.04em;flex:none}
-.row dd{text-align:right;color:var(--text)}
+.row dt{color:var(--muted);letter-spacing:.04em;flex:0 0 auto;white-space:nowrap}
+.row dd{
+  text-align:right;color:var(--text);
+  flex:1 1 auto;min-width:0;word-break:keep-all;
+}
 
 /* ── 명언 ─────────────────────────────── */
 .quote{
