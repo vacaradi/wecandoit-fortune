@@ -570,6 +570,46 @@ h2{
 }
 .collect-foot b{color:var(--gold);font-weight:600}
 
+/* ── 정사각 타일 (2×2) ────────────────── */
+.tiles{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:var(--s2);
+}
+.tile{
+  aspect-ratio:1;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  color:var(--text);
+  font-family:var(--font-sans);
+  text-decoration:none;cursor:pointer;
+  transition:border-color 350ms var(--ease),background 350ms var(--ease),transform 350ms var(--ease);
+}
+.tile:hover,.tile:focus-visible{
+  border-color:var(--gold-deep);
+  background:var(--surface-2);
+  transform:translateY(-2px);
+}
+.tile:focus-visible{outline:2px solid var(--orb);outline-offset:2px}
+.tile:disabled{opacity:.5;cursor:default;transform:none}
+
+.tile svg,.tile img{
+  width:38%;max-width:56px;height:auto;
+  aspect-ratio:1;object-fit:contain;
+  color:var(--gold);
+}
+.tile-mark{
+  font-family:var(--font-serif);
+  font-size:34px;font-weight:400;color:var(--gold);
+  line-height:1;
+}
+.tile span{
+  font-size:13px;letter-spacing:.02em;color:var(--muted);
+}
+.tile:hover span,.tile:focus-visible span{color:var(--text)}
+
 /* ── 넷플릭스 추천 ────────────────────── */
 .pick{
   margin-top:var(--s3);
@@ -949,14 +989,45 @@ h2{
     <!-- 수집 달력은 제거했습니다 -->
     <div id="stamps" hidden></div>
 
-    <div class="stack pad-t">
-      <button class="btn" id="saveBtn" onclick="saveTalisman()">부적 다운로드</button>
-      <button class="btn ghost" id="igBtn" onclick="openInstagram()">인스타그램 열기</button>
-      <button class="btn ghost" onclick="go(6)">오늘의 넷플릭스 보기</button>
-      <a class="btn ghost" href="https://chest.or.kr/base.do"
-         target="_blank" rel="noopener noreferrer">사랑의 열매로 복채 내기</a>
-      <a class="btn ghost" href="https://www.joseonlab.co.kr/"
-         target="_blank" rel="noopener noreferrer">조선혁신소 콘텐츠 협업</a>
+    <div class="tiles pad-t">
+      <button class="tile" id="saveBtn" onclick="saveTalisman()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3v11m0 0 4-4m-4 4-4-4" fill="none" stroke="currentColor"
+                stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" fill="none"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <span>부적 저장</span>
+      </button>
+
+      <button class="tile" id="igBtn" onclick="openInstagram()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5" fill="none"
+                stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/>
+        </svg>
+        <span>인스타그램</span>
+      </button>
+
+      <a class="tile" href="https://chest.or.kr/base.do" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 21s-7-4.6-7-9.4A4.1 4.1 0 0 1 12 8.6 4.1 4.1 0 0 1 19 11.6C19 16.4 12 21 12 21z"
+                fill="#D64A3F"/>
+          <path d="M12 8.6c.3-2 1.6-3.4 3.4-4-.2 2-1.3 3.4-3.4 4z" fill="#3E8E5A"/>
+        </svg>
+        <span>사랑의 열매</span>
+      </a>
+
+      <a class="tile" href="https://www.joseonlab.co.kr/" target="_blank" rel="noopener noreferrer">
+        <img src="../assets/brand/joseonlab.png" alt=""
+             onerror="this.replaceWith(Object.assign(document.createElement('b'),{className:'tile-mark',textContent:'朝'}))">
+        <span>조선혁신소</span>
+      </a>
+    </div>
+
+    <div class="stack" style="margin-top:var(--s2)">
+      <button class="btn" onclick="go(6)">오늘의 넷플릭스 보기</button>
       <button class="btn ghost" onclick="back()">이전으로</button>
       <button class="btn ghost" onclick="restart()">처음으로</button>
     </div>
@@ -2244,8 +2315,8 @@ function markSaved(){
 const fileName=()=>`위캔두잇_부적_${todayKey}.png`;
 
 async function saveTalisman(){
-  const btn=$("saveBtn"); const old=btn.textContent;
-  btn.textContent="부적을 그리는 중…"; btn.disabled=true;
+  const btn=$("saveBtn");
+  setTileLabel("saveBtn","그리는 중…"); btn.disabled=true;
   try{
     const blob=await buildTalismanImage();
 
@@ -2269,16 +2340,22 @@ async function saveTalisman(){
     if(e && e.name!=="AbortError")
       alert("부적을 만들지 못했습니다. 다시 시도해 주세요.");
   }
-  btn.textContent=old; btn.disabled=false;
+  setTileLabel("saveBtn","부적 저장"); btn.disabled=false;
 }
 
-// 기기에 따라 안내만 다르게 (버튼 이름은 '부적 다운로드'로 통일)
+// 기기에 따라 안내만 다르게 (타일 이름은 '부적 저장'으로 통일)
 function labelSaveBtn(){
   const mobile=canNativeShare();
   const w=$("talWarn");
   if(w) w.innerHTML= mobile
     ? "부적은 <b>나눌수록 세집니다.</b><br>내려받아 인스타그램에 올리면 오늘의 운이 한 단계 올라갑니다."
     : "부적은 <b>나눌수록 세집니다.</b><br>내려받은 뒤 인스타그램에서 직접 올려주세요.";
+}
+
+// 타일 안의 글자만 바꿉니다 (아이콘은 그대로)
+function setTileLabel(id,text){
+  const t=$(id); if(!t) return;
+  const s=t.querySelector("span"); if(s) s.textContent=text;
 }
 
 // 인스타그램 새 게시물 화면 — 로그인돼 있으면 본인 계정으로 바로 들어갑니다
@@ -2292,55 +2369,10 @@ function canNativeShare(){
   }catch(e){ return false; }
 }
 
-async function shareTalisman(){
-  const btn=$("shareBtn"); const old=btn.textContent;
-  const native=canNativeShare();
 
-  btn.textContent="부적을 그리는 중…"; btn.disabled=true;
-  try{
-    const blob=await buildTalismanImage();
-    const file=new File([blob],fileName(),{type:"image/png"});
-
-    if(native){
-      // 폰 — 공유 시트에서 인스타그램을 고르면 앱으로 바로 넘어갑니다
-      await navigator.share({
-        files:[file],
-        title:"오늘의 부적",
-        text:`${lastSet?.talisman?.phrase||""}\n#위캔두잇 #오늘의운세 #오늘의부적`
-      });
-      markSaved(); boostLuck();
-    }else{
-      // PC — 인스타그램은 외부 사이트의 업로드를 막아둡니다.
-      // 그래서 저장까지만 하고, 올리는 건 사용자가 직접 합니다.
-      const a=document.createElement("a");
-      a.href=URL.createObjectURL(blob); a.download=fileName();
-      a.click(); URL.revokeObjectURL(a.href);
-      markSaved(); boostLuck();
-      showShareHint();
-      showOpenInstagram();
-    }
-  }catch(e){
-    if(e && e.name!=="AbortError")
-      alert("부적을 만들지 못했습니다. 다시 시도해 주세요.");
-  }
-  btn.textContent=old; btn.disabled=false;
-}
 
 // PC에서 인스타 창을 연 뒤 남기는 안내 (alert 대신 화면 안에)
-function showShareHint(){
-  let box=$("shareHint");
-  if(!box){
-    box=document.createElement("p");
-    box.id="shareHint"; box.className="warn";
-    box.style.marginTop="var(--s2)";
-    $("shareBtn").parentNode.insertBefore(box,$("shareBtn").nextSibling);
-  }
-  box.innerHTML=
-    "부적을 <b>다운로드 폴더</b>에 저장했습니다.<br>"+
-    "PC에서는 인스타그램이 외부 사이트의 업로드를 막아둬서<br>"+
-    "<b>직접 올리셔야 합니다.</b> 아래 버튼으로 인스타그램을 열고,<br>"+
-    "새 게시물에서 방금 받은 파일을 고르시면 됩니다.";
-}
+
 
 // ── 인스타그램 바로 열기 ────────────────
 // 폰이면 앱으로, 앱이 없거나 PC면 웹으로 넘어갑니다.
@@ -2364,16 +2396,7 @@ function openInstagram(){
 }
 
 // 저장 뒤 "인스타그램 열기" 버튼을 띄웁니다
-function showOpenInstagram(){
-  if($("igOpenBtn")) return;
-  const b=document.createElement("button");
-  b.id="igOpenBtn"; b.type="button"; b.className="btn";
-  b.textContent="인스타그램 열기";
-  b.style.marginTop="var(--s2)";
-  b.onclick=openInstagram;
-  const anchor=$("shareBtn");
-  anchor.parentNode.insertBefore(b,anchor.nextSibling);
-}
+
 
 // 공유하면 오늘의 운이 한 단계 올라갑니다
 const BOOST="wcdi_boost";
