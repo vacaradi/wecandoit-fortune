@@ -853,7 +853,10 @@ h2{
       <p class="tip-body" id="fTip"></p>
     </div>
 
-    <div class="pad-t"><button class="btn" onclick="go(4)">오늘의 명언 보기</button></div>
+    <div class="stack pad-t">
+      <button class="btn" onclick="go(4)">오늘의 명언 보기</button>
+      <button class="btn ghost" onclick="back()">이전으로</button>
+    </div>
   </section>
 
   <!-- 4. 명언 -->
@@ -867,7 +870,10 @@ h2{
     </div>
     <hr class="rule">
     <p class="note" id="qNote"></p>
-    <div class="pad-t"><button class="btn" onclick="go(5)">부적 받기</button></div>
+    <div class="stack pad-t">
+      <button class="btn" onclick="go(5)">부적 받기</button>
+      <button class="btn ghost" onclick="back()">이전으로</button>
+    </div>
   </section>
 
   <!-- 넷플릭스 추천 (마지막 단계) -->
@@ -891,6 +897,7 @@ h2{
     </div>
 
     <div class="stack" style="padding-top:var(--s5)">
+      <button class="btn ghost" onclick="back()">이전으로</button>
       <button class="btn ghost" onclick="restart()">처음으로</button>
       <a class="btn ghost" href="https://chest.or.kr/base.do"
          target="_blank" rel="noopener noreferrer">사랑의 열매로 복채 내기</a>
@@ -933,6 +940,7 @@ h2{
          target="_blank" rel="noopener noreferrer">사랑의 열매로 복채 내기</a>
       <a class="btn ghost" href="https://www.joseonlab.co.kr/"
          target="_blank" rel="noopener noreferrer">조선혁신소 콘텐츠 협업</a>
+      <button class="btn ghost" onclick="back()">이전으로</button>
       <button class="btn ghost" onclick="restart()">처음으로</button>
     </div>
 
@@ -1451,6 +1459,13 @@ function update(){
 
 function start(){ pick(signIndex(+bY.value)); }
 
+// 이전 단계로 — 뽑기 화면(2)은 건너뜁니다
+const PREV={3:1,4:3,5:4,6:5};
+function back(){
+  SFX.click();
+  go(PREV[cur]!==undefined?PREV[cur]:0);
+}
+
 // 처음으로 — 입력값은 남겨두고 인트로만 다시 보여줍니다
 function restart(){
   SFX.click();
@@ -1692,8 +1707,19 @@ const KAKAO_CAT={
   subway:"SW8"     // 지하철역
 };
 
+/* 미성년자에게 내보내면 안 되는 곳.
+ * 카카오가 주는 분류명(예: "음식점 > 술집 > 호프,요리주점")으로 걸러낸다.
+ * 가게 이름으로만 거르면 "바나나"처럼 엉뚱한 것까지 걸리므로 분류를 먼저 본다. */
+const ADULT_CAT=/술집|주점|호프|맥주|칵테일|와인바|이자카야|포차|바텐더|유흥|나이트|클럽/;
+const ADULT_NAME=/유흥|룸살롱|단란주점|성인|나이트클럽/;
+
+function isAdultOnly(p){
+  return ADULT_CAT.test(p.category_name||"") || ADULT_NAME.test(p.place_name||"");
+}
+
 // 성공하면 장소를, 실패하면 이유를 돌려줍니다.
-async function findNearby(code,seedKey,radius){
+// bandKey 가 student 면 미성년자 부적합 장소를 빼고 고릅니다.
+async function findNearby(code,seedKey,radius,bandKey){
   const ready=await KAKAO_READY;
   if(!ready) return {why:"지도를 불러오지 못했습니다"};
 
@@ -1715,14 +1741,17 @@ async function findNearby(code,seedKey,radius){
     }catch(e){ res([]); }
   });
 
-  if(!list.length){
+  // 미성년자에게는 술집 종류를 아예 빼고 고릅니다
+  const safe = bandKey==="student" ? list.filter(p=>!isAdultOnly(p)) : list;
+
+  if(!safe.length){
     return {why: status==="ZERO_RESULT"
       ? "주변에 검색되는 곳이 없습니다"
       : "주변 검색이 막혀 있습니다"};
   }
 
   // 가까운 순 15곳 중에서 오늘의 씨앗으로 한 곳
-  const pool=list.slice(0,15);
+  const pool=safe.slice(0,15);
   const r=rngFrom(seedOf(seedKey));
   return {place:pool[Math.floor(r()*pool.length)]};
 }
@@ -1911,8 +1940,8 @@ function pick(i){
   const foodFallback=$("lLunch").textContent;
   const placeFallback=$("lSeat").textContent;
 
-  // 오늘의 음식 — 반경 1km 식당
-  findNearby(KAKAO_CAT.food,birth+"|near",1000)
+  // 오늘의 음식 — 반경 1km 식당 (학생이면 술집 제외)
+  findNearby(KAKAO_CAT.food,birth+"|near",1000,bandKey)
     .then(r=>paintPlace($("lLunch"),foodFallback,r)).catch(()=>{});
 
   // 행운의 장소 — 날마다 종류가 달라집니다
@@ -1920,7 +1949,7 @@ function pick(i){
                KAKAO_CAT.store,KAKAO_CAT.spot,KAKAO_CAT.subway];
   const kr=rngFrom(seedOf(birth+"|placeKind"));
   const kind=kinds[Math.floor(kr()*kinds.length)];
-  findNearby(kind,birth+"|place",1500)
+  findNearby(kind,birth+"|place",1500,bandKey)
     .then(r=>paintPlace($("lSeat"),placeFallback,r)).catch(()=>{});
   $("fItem").textContent=of(LUCK.item);
   $("fAvoid").textContent=of(LUCK.avoid);
