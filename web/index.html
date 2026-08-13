@@ -1515,6 +1515,40 @@ function rngFrom(seed){
   return ()=>{ x^=x<<13; x^=x>>>17; x^=x<<5; x>>>=0; return x/4294967296; };
 }
 
+// 오늘의 것들·오늘의 사람 — 운세와 같은 씨앗에서 뽑습니다.
+// 특정 상황에 매이지 않는 말들이라 어떤 운세와 붙어도 어색하지 않습니다.
+const LUCK={
+ color:["머스터드","짙은 남색","연한 베이지","와인빛 붉은색","차분한 회색",
+        "연두색","은색","다홍색","짙은 초록","연보라","샴페인 골드","밤색",
+        "하늘색","카키","진자주","크림색","먹색","살구색","청록","연분홍"],
+ place:["볕 드는 창가","동네 산책로","조용한 카페 구석","단골 가게","집 앞 편의점",
+        "지하철 두 번째 칸","서점 신간 코너","공원 벤치","옥상","강가 산책로",
+        "시장 골목","도서관","목욕탕","꽃집 앞","버스 창가 자리",
+        "우리 집 소파","자주 가는 밥집","동네 정자","계단참","베란다"],
+ food:["뜨끈한 국물","따뜻한 차","시원한 물 한 잔","달달한 것","집밥",
+       "해장국","김밥","계란찜","과일 한 접시","라면 대신 밥",
+       "커피 한 잔","죽","떡볶이","잔치국수","군고구마",
+       "숭늉","비빔밥","호빵","두유","삶은 계란"],
+ item:["충전 다 된 보조배터리","안 쓰던 지갑","오래된 열쇠고리","새로 산 양말",
+       "책상 위 스탠드","마시다 만 커피","주머니 속 동전","안경닦이",
+       "작은 손거울","포스트잇","접이식 우산","머리끈",
+       "손목시계","이어폰 한 짝","텀블러","립밤","볼펜","작은 화분",
+       "쿠폰 한 장","어제 적어둔 메모"],
+ avoid:["\"이따 하지 뭐\"","빈속에 커피","새벽에 장바구니 열기","읽씹 열 번 확인하기",
+        "괜한 눈치","무리한 약속","즉흥 결제","밤에 거울 보기",
+        "한 자리에 오래 앉아 있기","말 끝에 한마디 더 붙이기","단톡방 정독",
+        "배달앱 켜기","남과 비교하기","급하게 답장","빈말",
+        "\"딱 하나만\"","무리한 다짐","자기 전 휴대폰","과속","괜한 사과"],
+ allyWhy:["오늘은 니 편이야","말 안 해도 알아줘","눈치 빠르게 챙겨줘",
+          "같이 있으면 편해","조용히 도와줘","기분을 풀어줘",
+          "밥 사줄 확률 높음","말이 잘 통해","타이밍이 맞아",
+          "웃겨줘","기다려줘","먼저 연락 올 거야"],
+ foeWhy:["오늘따라 얄미워","꼭 한마디를 더 해","타이밍이 안 맞아",
+         "괜히 신경 쓰이게 해","말이 자꾸 엇나가","오늘은 피하는 게 나아",
+         "기분을 긁어","자꾸 재촉해","약속을 미뤄",
+         "눈치가 없어","자랑을 해","말이 길어져"]
+};
+
 const CAT_LABEL={total:"총운",love:"애정운",money:"금전운",work:"직장·학업운",health:"건강운"};
 const GRADES=["상","중","하"];
 
@@ -1653,8 +1687,26 @@ function pick(i){
   $("fLead").textContent=F.total.line;
   $("fBody").innerHTML="";
   $("fTip").innerHTML=s.tip.replace(/\n/g,"<br>");
-  $("fItem").textContent=s.item;
-  $("fAvoid").textContent=s.avoid;
+  // ── 오늘의 것들 ──────────────────────
+  const lr=rngFrom(seedOf(birth+"|luck"));
+  const of=arr=>arr[Math.floor(lr()*arr.length)];
+  $("lColor").textContent=of(LUCK.color);
+  $("lNum").textContent=1+Math.floor(lr()*12);
+  $("lSeat").textContent=of(LUCK.place);
+  $("lLunch").textContent=of(LUCK.food);
+  $("fItem").textContent=of(LUCK.item);
+  $("fAvoid").textContent=of(LUCK.avoid);
+
+  // ── 오늘의 사람 ──────────────────────
+  // 자기 띠를 뺀 나머지에서 서로 다른 둘을 고릅니다.
+  const others=SIGNS.map(x=>x.n).filter(n=>n!==s.signName);
+  const a=Math.floor(lr()*others.length);
+  let b=Math.floor(lr()*(others.length-1));
+  if(b>=a) b++;
+  $("pAllyN").textContent="아군 "+others[a]+"띠";
+  $("pAllyW").textContent=of(LUCK.allyWhy);
+  $("pFoeN").textContent="빌런 "+others[b]+"띠";
+  $("pFoeW").textContent=of(LUCK.foeWhy);
 
   // 부문별 — 애정 · 금전 · 직장(학업) · 건강
   $("fCats").innerHTML=["love","money","work","health"].map(k=>{
@@ -1668,17 +1720,6 @@ function pick(i){
     </div>`;
   }).join("");
 
-  // 오늘의 것들
-  $("lColor").textContent=s.lucky.color;
-  $("lNum").textContent=s.lucky.num;
-  $("lSeat").textContent=s.lucky.place;
-  $("lLunch").textContent=s.lucky.food;
-
-  // 오늘의 사람
-  $("pAllyN").textContent="아군 "+s.ally[0];
-  $("pAllyW").textContent=s.ally[1];
-  $("pFoeN").textContent="빌런 "+s.foe[0];
-  $("pFoeW").textContent=s.foe[1];
 
   // ── 오늘의 명언 ──────────────────────
   const qr=rngFrom(seedOf(birth+"|quote"));
