@@ -871,8 +871,12 @@ h2{
       </a>
     </div>
 
-    <div style="padding-top:var(--s5)">
-      <button class="btn ghost" onclick="go(0)">처음으로</button>
+    <div class="stack" style="padding-top:var(--s5)">
+      <button class="btn ghost" onclick="restart()">처음으로</button>
+      <a class="btn ghost" href="https://chest.or.kr/base.do"
+         target="_blank" rel="noopener noreferrer">사랑의 열매로 복채 내기</a>
+      <a class="btn ghost" href="https://www.joseonlab.co.kr/"
+         target="_blank" rel="noopener noreferrer">조선혁신소 콘텐츠 협업</a>
       <p class="muted" style="text-align:center;margin-top:12px">
         오늘의 운세는 여기까지입니다. 내일 또 오세요.
       </p>
@@ -910,6 +914,7 @@ h2{
          target="_blank" rel="noopener noreferrer">사랑의 열매로 복채 내기</a>
       <a class="btn ghost" href="https://www.joseonlab.co.kr/"
          target="_blank" rel="noopener noreferrer">조선혁신소 콘텐츠 협업</a>
+      <button class="btn ghost" onclick="restart()">처음으로</button>
     </div>
 
   </section>
@@ -1426,6 +1431,12 @@ function update(){
 }));
 
 function start(){ pick(signIndex(+bY.value)); }
+
+// 처음으로 — 입력값은 남겨두고 인트로만 다시 보여줍니다
+function restart(){
+  SFX.click();
+  go(0);
+}
 
 // 명언 화면 전용 영상 — 파일이 없으면 기본 영상 유지
 const heroA=$("hero"),heroB=$("hero2");
