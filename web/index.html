@@ -88,6 +88,18 @@ body::-webkit-scrollbar{width:0;height:0;display:none}
   transition:height var(--dur) var(--ease);
 }
 .stage.compact{height:26vh}
+/* 자동재생이 막히면 아이폰이 영상 위에 재생 버튼을 그립니다.
+   그래서 영상은 실제로 재생될 때만 보이게 하고,
+   그전에는 첫 장면 사진을 배경으로 깔아둡니다. */
+.stage{
+  background-image:url("../assets/video/main/hero-poster.jpg");
+  background-size:cover;
+  background-position:62% 42%;
+}
+.stage.tall{
+  background-image:url("../assets/video/main/quote-poster.jpg");
+  background-position:center 38%;
+}
 .stage video{
   position:absolute;inset:0;
   width:100%;height:100%;
@@ -96,13 +108,15 @@ body::-webkit-scrollbar{width:0;height:0;display:none}
   /* 나가는 영상: 즉시 사라짐 */
   transition:opacity 320ms var(--ease),filter var(--dur) var(--ease);
 }
-/* 들어오는 영상: 앞 영상이 사라진 뒤에 등장 — 겹침 방지 */
-.stage video.active{opacity:1;transition:opacity 480ms var(--ease) 340ms}
-.stage.compact video.active{opacity:.55;filter:saturate(.85)}
+/* 들어오는 영상: 앞 영상이 사라진 뒤에 등장 — 겹침 방지
+   playing 이 붙어야 보입니다 (재생 버튼이 보이지 않게) */
+.stage video.active.playing{opacity:1;transition:opacity 480ms var(--ease) 340ms}
+.stage.compact video.active.playing{opacity:.55;filter:saturate(.85)}
+.stage video{pointer-events:none}
 
 /* 명언 화면 — 밝은 영상이라 어둡게 눌러서 본문과 톤을 맞춤 */
 .stage.tall{height:40vh}
-.stage.tall #hero2.active{opacity:1;filter:brightness(.72) saturate(.9) contrast(1.05)}
+.stage.tall #hero2.active.playing{opacity:1;filter:brightness(.72) saturate(.9) contrast(1.05)}
 .stage.tall #hero2{object-position:center 38%}
 .stage::after{
   content:"";position:absolute;inset:0;pointer-events:none;
@@ -696,10 +710,10 @@ h2{
   .stage{position:fixed;inset:0;height:100vh;z-index:0}
   .stage video{object-position:68% center}
   .stage.compact{height:100vh}
-  .stage.compact video.active{opacity:.4}
+  .stage.compact video.active.playing{opacity:.4}
   /* 명언 화면 — PC에서도 높이는 그대로, 밝기만 조정 */
   .stage.tall{height:100vh}
-  .stage.tall #hero2.active{opacity:.5;filter:brightness(.8) saturate(.9)}
+  .stage.tall #hero2.active.playing{opacity:.5;filter:brightness(.8) saturate(.9)}
   .stage.tall #hero2{object-position:72% center}
   .stage::after{
     background:linear-gradient(to right,rgba(4,6,12,.94) 0%,rgba(4,6,12,.86) 34%,rgba(4,6,12,.25) 62%,transparent 100%);
@@ -2456,6 +2470,23 @@ const SFX=(function(){
 // 브라우저는 '소리 있는 자동재생'을 막습니다.
 // 다만 사용자가 화면을 한 번만 건드리면 바로 풀리므로,
 // 클릭·터치·스크롤·키 입력 중 무엇이든 첫 신호에 소리를 켭니다.
+// 실제로 재생될 때만 영상을 보여줍니다.
+// 막혀 있는 동안에는 배경에 깔아둔 첫 장면 사진이 보입니다.
+[heroA,heroB].forEach(v=>{
+  v.addEventListener("playing",()=>v.classList.add("playing"));
+  v.addEventListener("pause",()=>{ if(v.ended) v.classList.remove("playing"); });
+  // 준비될 때마다 다시 시도
+  ["loadeddata","canplay"].forEach(ev=>
+    v.addEventListener(ev,()=>{ if(v.classList.contains("active")) v.play().catch(()=>{}); }));
+});
+
+// 화면으로 돌아오면 멈춰 있던 영상을 다시 돌립니다
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden) return;
+  const a=document.querySelector(".stage video.active");
+  if(a&&a.paused) a.play().catch(()=>{});
+});
+
 (function primeSound(){
   // 영상은 무조건 음소거로 시작합니다.
   // 소리를 켠 채로 먼저 시도하면 브라우저가 막으면서 재생이 한 번 끊깁니다.
@@ -2467,6 +2498,8 @@ const SFX=(function(){
   const wake=()=>{
     if(done) return; done=true;
     SFX.unlock();                 // 영상 소리 + 효과음 권한 열기
+    // 자동재생이 막혀 있었다면 이 순간 풀립니다
+    [heroA,heroB].forEach(v=>{ if(v.classList.contains("active")) v.play().catch(()=>{}); });
     EVENTS.forEach(e=>window.removeEventListener(e,wake));
   };
   const EVENTS=["pointerdown","touchstart","keydown","wheel","scroll"];
