@@ -2361,10 +2361,40 @@ const SFX=(function(){
   EVENTS.forEach(e=>window.addEventListener(e,wake,{once:true,passive:true}));
 })();
 
-// 서비스워커 — 안드로이드가 '앱 설치'를 허용하려면 필요합니다
+// ── 서비스워커 ──────────────────────────
+// 안드로이드가 '앱 설치'를 허용하려면 필요합니다.
+// 새 버전이 올라오면 곧바로 갈아치우고 화면을 다시 불러옵니다.
+// (이게 없으면 홈 화면 앱이 옛날 화면을 계속 붙들고 있습니다)
 if("serviceWorker" in navigator&&location.protocol==="https:"){
-  window.addEventListener("load",()=>{
-    navigator.serviceWorker.register("/sw.js").catch(()=>{});
+  window.addEventListener("load",async()=>{
+    try{
+      const reg=await navigator.serviceWorker.register("/sw.js",{updateViaCache:"none"});
+
+      // 새 버전이 준비되면 기다리지 말고 바로 교체
+      reg.addEventListener("updatefound",()=>{
+        const sw=reg.installing;
+        if(!sw) return;
+        sw.addEventListener("statechange",()=>{
+          if(sw.state==="installed"&&navigator.serviceWorker.controller){
+            sw.postMessage("skipWaiting");
+          }
+        });
+      });
+
+      // 교체가 끝나면 화면을 한 번만 새로 불러옴
+      let reloaded=false;
+      navigator.serviceWorker.addEventListener("controllerchange",()=>{
+        if(reloaded) return;
+        reloaded=true;
+        location.reload();
+      });
+
+      // 앱을 다시 열 때마다 새 버전이 있는지 확인
+      reg.update();
+      document.addEventListener("visibilitychange",()=>{
+        if(!document.hidden) reg.update();
+      });
+    }catch(e){}
   });
 }
 

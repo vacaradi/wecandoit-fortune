@@ -7,7 +7,9 @@
  *       고쳐도 예전 화면이 계속 뜨는 사고가 반복됐다.
  */
 
-const CACHE = "wcdi-v1";
+// 캐시 이름을 바꾸면 예전 것이 전부 버려진다.
+// 내용을 크게 고칠 때마다 숫자를 올린다.
+const CACHE = "wcdi-v2";
 
 // 무거워서 캐시할 값어치가 있는 것들
 const ASSETS = [
@@ -29,6 +31,11 @@ self.addEventListener("install", (e) => {
       Promise.allSettled(ASSETS.map((u) => c.add(u)))
     )
   );
+});
+
+// 새 버전이 준비됐다는 신호를 받으면 기다리지 않고 바로 넘어간다
+self.addEventListener("message", (e) => {
+  if (e.data === "skipWaiting") self.skipWaiting();
 });
 
 self.addEventListener("activate", (e) => {
