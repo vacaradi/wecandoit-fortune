@@ -468,6 +468,14 @@ h2{
   display:block;margin-top:3px;
   font-size:12px;color:var(--muted);
 }
+/* 위치를 다시 물어보는 작은 버튼 */
+.ask-loc{
+  background:none;border:0;padding:0;
+  font-family:var(--font-sans);font-size:12px;
+  color:var(--orb);cursor:pointer;
+  border-bottom:1px solid rgba(127,208,255,.45);
+}
+.ask-loc:disabled{color:var(--muted);border-color:transparent;cursor:default}
 
 /* ── 명언 ─────────────────────────────── */
 .quote{
@@ -1731,8 +1739,23 @@ function paintPlace(el,fallback,r){
       `${p.place_name}</a>`+
       `<span class="near-sub">${kind?kind+" · ":""}${dist}</span>`;
   }else{
-    el.innerHTML=`${fallback}<span class="near-sub">${(r&&r.why)||""}</span>`;
+    const why=(r&&r.why)||"";
+    const needLoc=why.indexOf("위치")===0;
+    el.innerHTML=`${fallback}<span class="near-sub">`+
+      (needLoc
+        ? `<button type="button" class="ask-loc" onclick="askLocation()">내 주변으로 보기</button>`
+        : why)+`</span>`;
   }
+}
+
+// 위치를 다시 물어봅니다. 한 번 거부하면 저절로는 다시 안 물어봅니다.
+function askLocation(){
+  SFX.click();
+  posCache=null;                       // 캐시를 비워 다시 묻게 함
+  document.querySelectorAll(".ask-loc").forEach(b=>{
+    b.textContent="위치 확인 중…"; b.disabled=true;
+  });
+  if(lastPickIndex!==null) setTimeout(()=>pick(lastPickIndex),50);
 }
 
 const CAT_LABEL={total:"총운",love:"애정운",money:"금전운",work:"직장·학업운",health:"건강운"};
@@ -1834,7 +1857,10 @@ function pickNetflix(quoteText,quoteAuthor,bandKey,birth,grade){
   return {title,id:NFLIB[title].id,type:kind,genre:"오늘의 추천",why:reason};
 }
 
+let lastPickIndex=null;
+
 function pick(i){
+  lastPickIndex=i;
   const by=+bY.value;
   const bandKey=bandOf(by||THIS_YEAR-30);
   const s=getSet(i,bandKey);
