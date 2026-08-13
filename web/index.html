@@ -17,14 +17,14 @@
 <meta property="og:site_name" content="위캔두잇">
 <meta property="og:title" content="위캔두잇 오늘의 운세">
 <meta property="og:description" content="마법사 위가 구슬을 들여다봤습니다. 본 것을 그대로 옮깁니다.">
-<meta property="og:image" content="https://glittering-stroopwafel-d26857.netlify.app/assets/brand/og-image.png">
+<meta property="og:image" content="https://vacaradi.github.io/wecandoit-fortune/assets/brand/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:url" content="https://glittering-stroopwafel-d26857.netlify.app/">
+<meta property="og:url" content="https://vacaradi.github.io/wecandoit-fortune/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="위캔두잇 오늘의 운세">
 <meta name="twitter:description" content="마법사 위가 구슬을 들여다봤습니다. 본 것을 그대로 옮깁니다.">
-<meta name="twitter:image" content="https://glittering-stroopwafel-d26857.netlify.app/assets/brand/og-image.png">
+<meta name="twitter:image" content="https://vacaradi.github.io/wecandoit-fortune/assets/brand/og-image.png">
 <style>
 :root{
   --ink:#04060C;
@@ -2586,7 +2586,7 @@ document.addEventListener("visibilitychange",()=>{
 if("serviceWorker" in navigator&&location.protocol==="https:"){
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("/sw.js",{updateViaCache:"none"});
+      const reg=await navigator.serviceWorker.register("sw.js",{scope:"./",updateViaCache:"none"});
 
       // 새 버전이 준비되면 기다리지 말고 바로 교체
       reg.addEventListener("updatefound",()=>{

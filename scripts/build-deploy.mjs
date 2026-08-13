@@ -39,7 +39,7 @@ let html = readFileSync(join(ROOT, "web", "index.html"), "utf8");
 html = html
   .replaceAll("../assets/", "assets/")
   .replaceAll("../content/", "content/")
-  .replace('href="manifest.webmanifest"', 'href="/manifest.webmanifest"')
+  
   // 부적 이미지 목록을 실제 파일 목록으로 갈아끼운다
   .replace(/const TALISMANS=\[[^\]]*\];/,
            "const TALISMANS=" + JSON.stringify(talismans) + ";");
@@ -82,9 +82,9 @@ for (const [src, dst] of COPY) {
 const mf = join(DIST, "manifest.webmanifest");
 if (existsSync(mf)) {
   let txt = readFileSync(mf, "utf8")
-    .replaceAll("../assets/", "/assets/")
-    .replace('"start_url": "./index.html"', '"start_url": "/"')
-    .replace('"scope": "./"', '"scope": "/"');
+    .replaceAll("../assets/", "assets/")
+    .replace('"start_url": "./index.html"', '"start_url": "./"')
+    ;
   writeFileSync(mf, txt, "utf8");
 }
 
