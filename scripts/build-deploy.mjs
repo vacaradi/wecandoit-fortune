@@ -21,12 +21,28 @@ const DIST = join(ROOT, "dist");
 if (existsSync(DIST)) rmSync(DIST, { recursive: true, force: true });
 mkdirSync(DIST, { recursive: true });
 
+// ── 부적 이미지 목록 만들기 ──────────────
+// assets/talisman 폴더를 훑어서 목록을 만든다.
+// 파일을 넣기만 하면 코드를 고치지 않아도 자동으로 쓰인다.
+const TAL_DIR = join(ROOT, "assets", "talisman");
+let talismans = [];
+if (existsSync(TAL_DIR)) {
+  talismans = readdirSync(TAL_DIR)
+    .filter((f) => /\.(jpe?g|png|webp)$/i.test(f))
+    .sort()
+    .map((f) => "assets/talisman/" + f);
+}
+if (!talismans.length) talismans = ["assets/character/poses/wizard-orb.jpg"];
+
 // ── index.html — 경로 치환 ──────────────
 let html = readFileSync(join(ROOT, "web", "index.html"), "utf8");
 html = html
   .replaceAll("../assets/", "assets/")
   .replaceAll("../content/", "content/")
-  .replace('href="manifest.webmanifest"', 'href="/manifest.webmanifest"');
+  .replace('href="manifest.webmanifest"', 'href="/manifest.webmanifest"')
+  // 부적 이미지 목록을 실제 파일 목록으로 갈아끼운다
+  .replace(/const TALISMANS=\[[^\]]*\];/,
+           "const TALISMANS=" + JSON.stringify(talismans) + ";");
 writeFileSync(join(DIST, "index.html"), html, "utf8");
 
 // ── 실제로 쓰이는 파일만 복사 ────────────
@@ -70,6 +86,11 @@ if (existsSync(mf)) {
     .replace('"start_url": "./index.html"', '"start_url": "/"')
     .replace('"scope": "./"', '"scope": "/"');
   writeFileSync(mf, txt, "utf8");
+}
+
+// ── 부적 이미지 복사 ────────────────────
+if (existsSync(TAL_DIR)) {
+  cpSync(TAL_DIR, join(DIST, "assets", "talisman"), { recursive: true });
 }
 
 // ── 매일 생성되는 콘텐츠 ────────────────

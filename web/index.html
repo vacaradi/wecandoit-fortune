@@ -982,7 +982,7 @@ h2{
         <i class="tal-corner tl"></i><i class="tal-corner tr"></i>
         <i class="tal-corner bl"></i><i class="tal-corner br"></i>
         <p class="tal-title" id="tTitle"></p>
-        <img class="tal-char" src="../assets/character/poses/wizard-orb.jpg" alt="구슬을 든 위">
+        <img class="tal-char" id="talImg" src="../assets/talisman/01-구슬.jpg" alt="오늘의 부적">
         <p class="tal-phrase" id="tPhrase"></p>
       </div>
     </div>
@@ -2104,6 +2104,8 @@ function pick(i){
   $("nfWhy").innerHTML=nf.why.replace(/\n/g,"<br>");
   $("nfLink").href="https://www.netflix.com/title/"+nf.id;
 
+  lastSeed=birth;
+  $("talImg").src=talismanImageFor(birth);
   $("tReason").textContent=s.talisman.why;
   $("tTitle").textContent=
     `${d.getFullYear()} · ${pad2(d.getMonth()+1)} · ${pad2(d.getDate())}`;
@@ -2174,10 +2176,22 @@ function renderStamps(){
   renderBoost();
 }
 
+// ── 부적 이미지 목록 ────────────────────
+// assets/talisman 폴더에 파일을 넣으면 배포할 때 이 목록이 자동으로 채워집니다.
+// 파일명은 자유롭게 지으셔도 됩니다.
+const TALISMANS=["../assets/talisman/01-구슬.jpg"];
+
+// 오늘의 부적에 쓸 그림 한 장
+function talismanImageFor(seedStr){
+  const r=rngFrom(seedOf(seedStr+"|talimg"));
+  return TALISMANS[Math.floor(r()*TALISMANS.length)];
+}
+
 // ── 부적 이미지 만들기 ──────────────────
 // 1080×1920 세로 (인스타 스토리 규격). 캔버스에 직접 그립니다.
 let lastSet=null;      // 지금 화면에 뜬 세트
 let lastFortune=null;  // 오늘 뽑힌 운세 문구
+let lastSeed="";       // 오늘의 씨앗 (부적 그림을 고를 때도 씁니다)
 
 function loadImg(src){
   return new Promise((res,rej)=>{
@@ -2262,8 +2276,11 @@ async function buildTalismanImage(){
 
   // 캐릭터 — 사각형 테두리가 보이지 않게 가장자리를 부드럽게 지웁니다
   try{
-    const im=await loadImg("../assets/character/poses/wizard-orb.jpg");
-    const iw=740,ih=im.height*(iw/im.width);
+    const im=await loadImg(talismanImageFor(lastSeed));
+    // 그림마다 가로세로 비율이 달라, 정해둔 칸 안에 맞춰 넣습니다
+    const BOX_W=760,BOX_H=740;
+    const k=Math.min(BOX_W/im.width,BOX_H/im.height);
+    const iw=Math.round(im.width*k),ih=Math.round(im.height*k);
 
     const oc=document.createElement("canvas");
     oc.width=iw; oc.height=ih;
@@ -2282,7 +2299,9 @@ async function buildTalismanImage(){
     og.fillStyle=fade;
     og.fillRect(0,0,iw,ih);
 
-    g.drawImage(oc,(W-iw)/2,225,iw,ih);
+    // 날짜와 기원문 사이 공간의 한가운데에 놓습니다
+    const top=225, bottom=H-250;
+    g.drawImage(oc,(W-iw)/2,Math.round(top+(bottom-top-ih)/2),iw,ih);
   }catch(e){}
 
   // 기원문
