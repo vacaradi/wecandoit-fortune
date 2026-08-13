@@ -9,13 +9,17 @@
 
 // 캐시 이름을 바꾸면 예전 것이 전부 버려진다.
 // 내용을 크게 고칠 때마다 숫자를 올린다.
-const CACHE = "wcdi-v5";
+const CACHE = "wcdi-v6";
 
-// 무거워서 캐시할 값어치가 있는 것들
+/* 영상은 절대 저장하지 않는다.
+ *
+ * 영상은 재생할 때 "이 파일의 3초부터 5초까지" 같은 조각 요청(Range)을 쓴다.
+ * 저장된 응답은 통째로만 내줄 수 있어서 그 요청에 답하지 못하고,
+ * 특히 아이폰에서 재생이 아예 막힌다.
+ * 그래서 영상은 언제나 서버에서 직접 받는다.
+ */
 const ASSETS = [
-  "/assets/video/main/hero.mp4",
   "/assets/video/main/hero-poster.jpg",
-  "/assets/video/main/quote.mp4",
   "/assets/video/main/quote-poster.jpg",
   "/assets/character/poses/wizard-orb.jpg",
   "/assets/brand/logo.png",
@@ -52,6 +56,16 @@ self.addEventListener("fetch", (e) => {
 
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+
+  // 영상과 조각 요청은 서비스워커가 손대지 않는다 (위 주석 참고)
+  if (
+    req.headers.has("range") ||
+    req.destination === "video" ||
+    req.destination === "audio" ||
+    /\.(mp4|webm|m4a|mp3|mov)$/i.test(url.pathname)
+  ) {
+    return;
+  }
 
   // 화면(HTML)은 항상 서버에서 새로 받는다
   const isPage =
