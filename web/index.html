@@ -48,7 +48,11 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-text-size-adjust:100%}
+html{
+  -webkit-text-size-adjust:100%;
+  /* 위아래 끝에서 튕기는 것과 당겨서 새로고침을 막습니다 */
+  overscroll-behavior:none;
+}
 body{
   background:var(--ink);
   color:var(--text);
@@ -56,7 +60,12 @@ body{
   line-height:1.75;
   overflow-x:hidden;
   min-height:100vh;
+  overscroll-behavior:none;
+  /* 스크롤 막대를 숨깁니다. 앱으로 띄우면 세로선이 거슬립니다 */
+  scrollbar-width:none;
+  -ms-overflow-style:none;
 }
+body::-webkit-scrollbar{width:0;height:0;display:none}
 
 /* ── 그레인 ───────────────────────────── */
 .grain{
@@ -702,10 +711,12 @@ h2{
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=b63631e4c4602df29f6bef8ffa43b100&libraries=services&autoload=false"></script>
 
 <div class="stage" id="stage">
-  <video id="hero" class="active" autoplay muted loop playsinline preload="metadata"
+  <video id="hero" class="active" autoplay muted loop playsinline preload="auto"
+         disablepictureinpicture disableremoteplayback
          poster="../assets/video/main/hero-poster.jpg"
          src="../assets/video/main/hero.mp4"></video>
-  <video id="hero2" muted playsinline preload="none"
+  <video id="hero2" muted playsinline preload="auto"
+         disablepictureinpicture disableremoteplayback
          poster="../assets/video/main/quote-poster.jpg"
          src="../assets/video/main/quote.mp4"></video>
   <div class="aura" id="aura"></div>
@@ -2341,15 +2352,11 @@ const SFX=(function(){
 // 다만 사용자가 화면을 한 번만 건드리면 바로 풀리므로,
 // 클릭·터치·스크롤·키 입력 중 무엇이든 첫 신호에 소리를 켭니다.
 (function primeSound(){
-  // 우선 소리를 켠 채로 시도해 봅니다 (일부 환경은 그대로 재생됩니다)
-  if(SFX.isOn()){
-    heroA.muted=false; heroA.volume=0.7;
-  }
-  heroA.play().catch(()=>{
-    // 막혔다면 음소거로라도 영상은 돌려놓습니다
-    heroA.muted=true;
-    heroA.play().catch(()=>{});
-  });
+  // 영상은 무조건 음소거로 시작합니다.
+  // 소리를 켠 채로 먼저 시도하면 브라우저가 막으면서 재생이 한 번 끊깁니다.
+  heroA.muted=true;
+  heroA.volume=0.7;
+  heroA.play().catch(()=>{});
 
   let done=false;
   const wake=()=>{
