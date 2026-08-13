@@ -9,7 +9,7 @@
 
 // 캐시 이름을 바꾸면 예전 것이 전부 버려진다.
 // 내용을 크게 고칠 때마다 숫자를 올린다.
-const CACHE = "wcdi-v3";
+const CACHE = "wcdi-v4";
 
 // 무거워서 캐시할 값어치가 있는 것들
 const ASSETS = [
