@@ -100,6 +100,9 @@ body::-webkit-scrollbar{width:0;height:0;display:none}
   background-image:url("../assets/video/main/quote-poster.jpg");
   background-position:center 38%;
 }
+/* 영상이 돌기 시작하면 배경 사진을 치웁니다.
+   안 그러면 반투명 영상 뒤로 사진이 비쳐 두 개가 겹쳐 보입니다. */
+.stage.vid-on{background-image:none}
 .stage video{
   position:absolute;inset:0;
   width:100%;height:100%;
@@ -1500,6 +1503,9 @@ function setStageVideo(n){
   heroA.classList.toggle("active",!useAlt);
   heroB.classList.toggle("active",useAlt);
   stage.classList.toggle("tall",useAlt);
+  // 화면이 바뀌는 순간에는 배경 사진으로 돌아갑니다
+  stage.classList.remove("vid-on");
+  setTimeout(syncStageBg,900);
   // 사용자가 화면을 건드리기 전에는 음소거를 유지합니다.
   // 안 그러면 브라우저가 자동재생을 막고 재생 버튼이 뜹니다.
   const snd=(typeof SFX!=="undefined")&&SFX.isOn()&&SFX.isUnlocked();
@@ -2472,9 +2478,15 @@ const SFX=(function(){
 // 클릭·터치·스크롤·키 입력 중 무엇이든 첫 신호에 소리를 켭니다.
 // 실제로 재생될 때만 영상을 보여줍니다.
 // 막혀 있는 동안에는 배경에 깔아둔 첫 장면 사진이 보입니다.
+function syncStageBg(){
+  // 지금 보이는 영상이 실제로 돌고 있으면 배경 사진을 치웁니다
+  const a=document.querySelector(".stage video.active");
+  stage.classList.toggle("vid-on",!!(a&&a.classList.contains("playing")));
+}
+
 [heroA,heroB].forEach(v=>{
-  v.addEventListener("playing",()=>v.classList.add("playing"));
-  v.addEventListener("pause",()=>{ if(v.ended) v.classList.remove("playing"); });
+  v.addEventListener("playing",()=>{ v.classList.add("playing"); syncStageBg(); });
+  v.addEventListener("pause",()=>{ if(v.ended){ v.classList.remove("playing"); syncStageBg(); } });
   // 준비될 때마다 다시 시도
   ["loadeddata","canplay"].forEach(ev=>
     v.addEventListener(ev,()=>{ if(v.classList.contains("active")) v.play().catch(()=>{}); }));
