@@ -441,6 +441,17 @@ h2{
   text-align:right;color:var(--text);
   flex:1 1 auto;min-width:0;word-break:keep-all;
 }
+/* 내 주변에서 찾은 진짜 가게 */
+.near{
+  color:var(--gold);text-decoration:none;
+  border-bottom:1px solid rgba(214,178,76,.4);
+}
+.near::after{content:" ↗";font-size:11px;opacity:.7}
+.near:hover,.near:focus-visible{border-color:var(--gold)}
+.near-sub{
+  display:block;margin-top:3px;
+  font-size:12px;color:var(--muted);
+}
 
 /* ── 명언 ─────────────────────────────── */
 .quote{
@@ -678,6 +689,10 @@ h2{
   .vignette{background:radial-gradient(140% 100% at 70% 45%,transparent 45%,rgba(4,6,12,.7) 100%)}
 }
 </style>
+
+<!-- 카카오 지도 — 내 주변 식당을 찾는 데만 씁니다.
+     이 키는 등록된 도메인에서만 작동하므로 노출돼도 안전합니다. -->
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=b63631e4c4602df29f6bef8ffa43b100&libraries=services&autoload=false"></script>
 
 <div class="stage" id="stage">
   <video id="hero" class="active" autoplay muted loop playsinline preload="metadata"
@@ -1603,6 +1618,49 @@ const LUCK={
          "눈치가 없어","자랑을 해","말이 길어져"]
 };
 
+// ── 내 주변 식당 찾기 ────────────────────
+// 위치를 허락하면 반경 1km 안 실제 식당을 골라주고,
+// 거절하거나 실패하면 위 목록에서 뽑은 음식이 그대로 남습니다.
+const KAKAO_READY=new Promise(res=>{
+  if(!window.kakao||!window.kakao.maps) return res(false);
+  try{ kakao.maps.load(()=>res(true)); }catch(e){ res(false); }
+});
+
+function myPosition(){
+  return new Promise(res=>{
+    if(!navigator.geolocation) return res(null);
+    navigator.geolocation.getCurrentPosition(
+      p=>res(p.coords),
+      ()=>res(null),
+      {timeout:8000,maximumAge:600000,enableHighAccuracy:false}
+    );
+  });
+}
+
+async function findNearbyFood(seedStr){
+  const ready=await KAKAO_READY;
+  if(!ready) return null;
+  const c=await myPosition();
+  if(!c) return null;
+
+  const places=new kakao.maps.services.Places();
+  const list=await new Promise(res=>{
+    places.categorySearch("FD6",(data,status)=>{
+      res(status===kakao.maps.services.Status.OK?data:[]);
+    },{
+      location:new kakao.maps.LatLng(c.latitude,c.longitude),
+      radius:1000,
+      sort:"distance"
+    });
+  });
+  if(!list.length) return null;
+
+  // 가까운 순 15곳 중에서 오늘의 씨앗으로 한 곳
+  const pool=list.slice(0,15);
+  const r=rngFrom(seedOf(seedStr+"|near"));
+  return pool[Math.floor(r()*pool.length)];
+}
+
 const CAT_LABEL={total:"총운",love:"애정운",money:"금전운",work:"직장·학업운",health:"건강운"};
 const GRADES=["상","중","하"];
 
@@ -1748,6 +1806,18 @@ function pick(i){
   $("lNum").textContent=1+Math.floor(lr()*12);
   $("lSeat").textContent=of(LUCK.place);
   $("lLunch").textContent=of(LUCK.food);
+
+  // 위치를 허락하면 진짜 가게 이름으로 바꿔줍니다
+  findNearbyFood(birth).then(p=>{
+    if(!p) return;
+    const km=+p.distance;
+    const dist=km>=1000?(km/1000).toFixed(1)+"km":km+"m";
+    const kind=(p.category_name||"").split(">").pop().trim();
+    $("lLunch").innerHTML=
+      `<a class="near" href="${p.place_url}" target="_blank" rel="noopener noreferrer">`+
+      `${p.place_name}</a>`+
+      `<span class="near-sub">${kind?kind+" · ":""}${dist}</span>`;
+  }).catch(()=>{});
   $("fItem").textContent=of(LUCK.item);
   $("fAvoid").textContent=of(LUCK.avoid);
 
