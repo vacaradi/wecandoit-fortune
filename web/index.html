@@ -579,47 +579,41 @@ h2{
 .tile{
   aspect-ratio:1;
   display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:12px;
-  background:var(--surface);
-  border:1px solid var(--line);
-  color:var(--text);
+  align-items:center;justify-content:center;gap:10px;
+  /* 흰 바탕이라 어떤 색 로고든 원래 색 그대로 보입니다 */
+  background:#FFFFFF;
+  border:1px solid rgba(0,0,0,.06);
+  color:#3A3F4B;
   font-family:var(--font-sans);
   text-decoration:none;cursor:pointer;
-  transition:border-color 350ms var(--ease),background 350ms var(--ease),transform 350ms var(--ease);
+  box-shadow:0 6px 20px rgba(0,0,0,.35);
+  transition:background 350ms var(--ease),transform 350ms var(--ease),box-shadow 350ms var(--ease);
 }
 .tile:hover,.tile:focus-visible{
-  border-color:var(--gold-deep);
-  background:var(--surface-2);
+  background:#F5F3EE;
   transform:translateY(-2px);
+  box-shadow:0 10px 26px rgba(0,0,0,.45);
 }
 .tile:focus-visible{outline:2px solid var(--orb);outline-offset:2px}
 .tile:disabled{opacity:.5;cursor:default;transform:none}
 
+/* 흰 타일 위에 로고만 올립니다. 뒤에 덧대는 판은 두지 않습니다. */
 .tile img,.tile .tile-ico{
   display:flex;align-items:center;justify-content:center;
-  width:42%;max-width:60px;height:42%;max-height:60px;
+  width:46%;max-width:64px;height:46%;max-height:64px;
   object-fit:contain;
-  color:var(--gold);
+  color:#8A6A1F;
 }
 .tile .tile-ico svg{width:100%;height:100%}
-
-/* 어두운 로고는 우주 배경에서 묻힙니다.
-   밝은 원판을 깔아 어떤 색 로고든 또렷하게 보이게 합니다. */
-.tile img{
-  background:#F4F1EA;
-  border-radius:50%;
-  padding:9px;
-  box-shadow:0 4px 14px rgba(0,0,0,.35);
-}
 .tile-mark{
   font-family:var(--font-serif);
-  font-size:34px;font-weight:400;color:var(--gold);
+  font-size:34px;font-weight:400;color:#8A6A1F;
   line-height:1;
 }
 .tile span{
-  font-size:13px;letter-spacing:.02em;color:var(--muted);
+  font-size:12.5px;letter-spacing:.01em;color:#5A5F6B;
 }
-.tile:hover span,.tile:focus-visible span{color:var(--text)}
+.tile:hover span,.tile:focus-visible span{color:#1B1E26}
 
 /* ── 넷플릭스 추천 ────────────────────── */
 .pick{
