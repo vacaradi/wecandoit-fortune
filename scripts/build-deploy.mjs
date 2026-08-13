@@ -44,6 +44,10 @@ const COPY = [
   ["assets/brand/icon-512.png", "assets/brand/icon-512.png"],
   ["assets/brand/apple-touch-icon.png", "assets/brand/apple-touch-icon.png"],
   ["assets/brand/og-image.png", "assets/brand/og-image.png"],
+  ["assets/brand/logo-instagram.png", "assets/brand/logo-instagram.png"],
+  ["assets/brand/logo-netflix.png",   "assets/brand/logo-netflix.png"],
+  ["assets/brand/logo-chest.png",     "assets/brand/logo-chest.png"],
+  ["assets/brand/logo-joseonlab.png", "assets/brand/logo-joseonlab.png"],
   // 앱 설치 정보
   ["web/manifest.webmanifest", "manifest.webmanifest"],
   ["web/sw.js", "sw.js"],
