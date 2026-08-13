@@ -2160,6 +2160,13 @@ const SFX=(function(){
   EVENTS.forEach(e=>window.addEventListener(e,wake,{once:true,passive:true}));
 })();
 
+// 서비스워커 — 안드로이드가 '앱 설치'를 허용하려면 필요합니다
+if("serviceWorker" in navigator&&location.protocol==="https:"){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("/sw.js").catch(()=>{});
+  });
+}
+
 // ── 홈 화면에 앱으로 두기 ────────────────
 // 안드로이드는 브라우저가 설치 권한을 내주면 버튼으로,
 // 아이폰은 그 권한이 없어 방법을 글로 안내합니다.
@@ -2171,14 +2178,44 @@ window.addEventListener("beforeinstallprompt",e=>{
   $("installBtn").hidden=false;
 });
 
-function installApp(){
-  if(!deferredInstall) return;
-  deferredInstall.prompt();
-  deferredInstall.userChoice.finally(()=>{
-    deferredInstall=null;
-    $("installBtn").hidden=true;
-  });
+function showTip(html){
+  const tip=$("installTip");
+  tip.innerHTML=html; tip.hidden=false;
 }
+
+async function installApp(){
+  const btn=$("installBtn");
+
+  // 설치 권한이 없으면 직접 하는 방법을 알려줍니다
+  if(!deferredInstall){
+    showTip("브라우저 <b>메뉴(⋮)</b>를 열고 "+
+            "<b>앱 설치</b> 또는 <b>홈 화면에 추가</b>를 눌러주세요.");
+    return;
+  }
+
+  btn.disabled=true;
+  try{
+    deferredInstall.prompt();
+    const res=await deferredInstall.userChoice;
+    if(res&&res.outcome==="accepted"){
+      btn.hidden=true;
+      showTip("홈 화면에 추가했습니다. <b>아이콘으로 열어보세요.</b>");
+    }else{
+      showTip("설치를 취소하셨습니다. 언제든 다시 누르셔도 됩니다.");
+    }
+  }catch(e){
+    showTip("브라우저 <b>메뉴(⋮)</b>에서 "+
+            "<b>앱 설치</b>를 눌러주세요.");
+  }
+  deferredInstall=null;
+  btn.disabled=false;
+}
+
+// 설치가 끝나면 버튼을 감춥니다
+window.addEventListener("appinstalled",()=>{
+  const b=$("installBtn"); if(b) b.hidden=true;
+  showTip("홈 화면에 추가했습니다. <b>아이콘으로 열어보세요.</b>");
+});
 
 (function installHint(){
   const standalone=window.matchMedia("(display-mode: standalone)").matches

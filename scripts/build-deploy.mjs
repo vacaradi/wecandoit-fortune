@@ -46,6 +46,7 @@ const COPY = [
   ["assets/brand/og-image.png", "assets/brand/og-image.png"],
   // 앱 설치 정보
   ["web/manifest.webmanifest", "manifest.webmanifest"],
+  ["web/sw.js", "sw.js"],
 ];
 
 const missing = [];
@@ -88,6 +89,9 @@ writeFileSync(join(DIST, "_headers"), `/*
   Cache-Control: no-store
 
 /manifest.webmanifest
+  Cache-Control: no-cache
+
+/sw.js
   Cache-Control: no-cache
 
 /content/*
