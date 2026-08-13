@@ -496,6 +496,33 @@ h2{
 }
 .collect-foot b{color:var(--gold);font-weight:600}
 
+/* ── 콘텐츠 협업 ──────────────────────── */
+.collab{
+  display:block;margin-top:var(--s5);
+  padding-top:var(--s3);
+  border-top:1px solid var(--line);
+  text-decoration:none;
+  transition:opacity 350ms var(--ease);
+}
+.collab:hover,.collab:focus-visible{opacity:.75}
+.collab:focus-visible{outline:2px solid var(--orb);outline-offset:4px}
+.collab-label{
+  display:block;
+  font-size:10px;letter-spacing:.26em;color:var(--muted);
+  margin-bottom:8px;
+}
+.collab-name{
+  display:block;
+  font-family:var(--font-serif);
+  font-size:20px;color:var(--gold);
+  letter-spacing:.02em;
+}
+.collab-name::after{content:" ↗";font-size:13px;opacity:.7}
+.collab-desc{
+  display:block;margin-top:6px;
+  font-size:12px;color:var(--muted);
+}
+
 /* ── 넷플릭스 추천 ────────────────────── */
 .pick{
   margin-top:var(--s3);
@@ -860,6 +887,12 @@ h2{
       <button class="btn ghost" id="igBtn" onclick="openInstagram()">인스타그램 열기</button>
       <button class="btn ghost" onclick="go(6)">오늘의 넷플릭스 보기</button>
     </div>
+
+    <a class="collab" href="https://www.joseonlab.co.kr/" target="_blank" rel="noopener noreferrer">
+      <span class="collab-label">콘텐츠 협업</span>
+      <span class="collab-name">조선혁신소</span>
+      <span class="collab-desc">함께 만들 이야기가 있다면</span>
+    </a>
 
   </section>
 
@@ -2106,10 +2139,30 @@ const SFX=(function(){
   };
 })();
 
-// 자동재생 실패 대비
-heroA.play().catch(()=>{
-  document.addEventListener("click",()=>heroA.play(),{once:true});
-});
+// ── 배경음을 최대한 일찍 ──────────────────
+// 브라우저는 '소리 있는 자동재생'을 막습니다.
+// 다만 사용자가 화면을 한 번만 건드리면 바로 풀리므로,
+// 클릭·터치·스크롤·키 입력 중 무엇이든 첫 신호에 소리를 켭니다.
+(function primeSound(){
+  // 우선 소리를 켠 채로 시도해 봅니다 (일부 환경은 그대로 재생됩니다)
+  if(SFX.isOn()){
+    heroA.muted=false; heroA.volume=0.7;
+  }
+  heroA.play().catch(()=>{
+    // 막혔다면 음소거로라도 영상은 돌려놓습니다
+    heroA.muted=true;
+    heroA.play().catch(()=>{});
+  });
+
+  let done=false;
+  const wake=()=>{
+    if(done) return; done=true;
+    SFX.unlock();                 // 영상 소리 + 효과음 권한 열기
+    EVENTS.forEach(e=>window.removeEventListener(e,wake));
+  };
+  const EVENTS=["pointerdown","touchstart","keydown","wheel","scroll"];
+  EVENTS.forEach(e=>window.addEventListener(e,wake,{once:true,passive:true}));
+})();
 
 // 소리 켜기·끄기 버튼
 const sndBtn=$("sndToggle");
