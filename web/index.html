@@ -1498,14 +1498,25 @@ heroB.load();
 
 const ALT_SCREEN=4; // 오늘의 명언
 
+let usingAlt=null;
+
 function setStageVideo(n){
   const useAlt=(n===ALT_SCREEN)&&altReady;
+  const swapped=(usingAlt!==null&&usingAlt!==useAlt);
+  usingAlt=useAlt;
+
   heroA.classList.toggle("active",!useAlt);
   heroB.classList.toggle("active",useAlt);
   stage.classList.toggle("tall",useAlt);
-  // 화면이 바뀌는 순간에는 배경 사진으로 돌아갑니다
-  stage.classList.remove("vid-on");
-  setTimeout(syncStageBg,900);
+
+  // 영상이 실제로 바뀔 때만 배경 사진을 잠깐 되살립니다.
+  // 같은 영상이 이어질 때 사진을 켜면 돌아가는 영상 뒤로 비쳐 겹쳐 보입니다.
+  if(swapped){
+    stage.classList.remove("vid-on");
+    setTimeout(syncStageBg,900);
+  }else{
+    syncStageBg();
+  }
   // 사용자가 화면을 건드리기 전에는 음소거를 유지합니다.
   // 안 그러면 브라우저가 자동재생을 막고 재생 버튼이 뜹니다.
   const snd=(typeof SFX!=="undefined")&&SFX.isOn()&&SFX.isUnlocked();
