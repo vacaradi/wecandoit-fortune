@@ -291,6 +291,15 @@ h2{
 }
 .derived span{font-size:13px;color:var(--muted);letter-spacing:.04em}
 
+/* 홈 화면 설치 안내 */
+.install-tip{
+  margin-top:12px;padding:14px var(--s2);
+  border:1px solid var(--line);
+  font-size:13px;line-height:1.75;color:var(--muted);
+  word-break:keep-all;
+}
+.install-tip b{color:var(--gold);font-weight:600}
+
 /* 소리 켜기·끄기 — 아이콘 없이 글자만 */
 .snd{
   background:none;border:0;padding:6px 2px;
@@ -695,6 +704,9 @@ h2{
 
     <div class="pad-t">
       <button class="btn" onclick="SFX.unlock();SFX.click();go(1)">오늘의 운세 시작</button>
+      <button class="btn ghost" id="installBtn" hidden
+              onclick="installApp()">홈 화면에 앱으로 두기</button>
+      <p class="install-tip" id="installTip" hidden></p>
       <p style="text-align:center;margin-top:14px">
         <button type="button" id="sndToggle" class="snd">소리 켜기</button>
       </p>
@@ -2146,6 +2158,46 @@ const SFX=(function(){
   };
   const EVENTS=["pointerdown","touchstart","keydown","wheel","scroll"];
   EVENTS.forEach(e=>window.addEventListener(e,wake,{once:true,passive:true}));
+})();
+
+// ── 홈 화면에 앱으로 두기 ────────────────
+// 안드로이드는 브라우저가 설치 권한을 내주면 버튼으로,
+// 아이폰은 그 권한이 없어 방법을 글로 안내합니다.
+let deferredInstall=null;
+
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault();
+  deferredInstall=e;
+  $("installBtn").hidden=false;
+});
+
+function installApp(){
+  if(!deferredInstall) return;
+  deferredInstall.prompt();
+  deferredInstall.userChoice.finally(()=>{
+    deferredInstall=null;
+    $("installBtn").hidden=true;
+  });
+}
+
+(function installHint(){
+  const standalone=window.matchMedia("(display-mode: standalone)").matches
+                 || window.navigator.standalone===true;
+  if(standalone) return;                      // 이미 앱으로 실행 중
+
+  const ua=navigator.userAgent;
+  const isIOS=/iPhone|iPad|iPod/.test(ua);
+  const isSafari=isIOS&&!/CriOS|FxiOS|EdgiOS/.test(ua);
+  const tip=$("installTip");
+
+  if(isIOS&&isSafari){
+    tip.innerHTML="아래 <b>공유 버튼</b>을 누르고 "+
+                  "<b>홈 화면에 추가</b>를 고르면 앱처럼 쓸 수 있습니다.";
+    tip.hidden=false;
+  }else if(isIOS){
+    tip.innerHTML="<b>Safari</b>로 열면 홈 화면에 앱으로 둘 수 있습니다.";
+    tip.hidden=false;
+  }
 })();
 
 // 소리 켜기·끄기 버튼
