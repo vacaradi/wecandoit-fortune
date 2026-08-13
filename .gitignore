@@ -19,3 +19,6 @@ __pycache__/
 # 로컬 설정
 .env
 .env.*
+
+# 부적 그림 원본 — 웹용으로 줄인 파일만 배포한다
+assets/talisman/_source/

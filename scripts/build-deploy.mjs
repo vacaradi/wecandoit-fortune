@@ -89,8 +89,15 @@ if (existsSync(mf)) {
 }
 
 // ── 부적 이미지 복사 ────────────────────
-if (existsSync(TAL_DIR)) {
-  cpSync(TAL_DIR, join(DIST, "assets", "talisman"), { recursive: true });
+// _source 같은 하위 폴더(원본 보관용)는 배포에 넣지 않는다.
+if (talismans.length) {
+  for (const rel of talismans) {
+    const from = join(ROOT, rel);
+    if (!existsSync(from)) continue;
+    const to = join(DIST, rel);
+    mkdirSync(dirname(to), { recursive: true });
+    cpSync(from, to);
+  }
 }
 
 // ── 매일 생성되는 콘텐츠 ────────────────
