@@ -1053,13 +1053,26 @@ h2{
       </a>
     </div>
 
-    <div class="stack" style="padding-top:var(--s5)">
+    <!-- 밖으로 나가는 링크는 부적 화면과 같은 로고 타일로 둡니다.
+         같은 성격의 것이 화면마다 다른 모양이면 다른 서비스처럼 보입니다. -->
+    <div class="tiles" style="margin-top:var(--s5)">
+      <a class="tile-wrap" href="https://chest.or.kr/base.do" target="_blank" rel="noopener noreferrer">
+        <span class="tile">
+          <img src="../assets/brand/logo-chest.png" alt="사랑의 열매" onerror="tileFallback(this,'chest')">
+        </span>
+        <span class="tile-cap">복채 기부</span>
+      </a>
+      <a class="tile-wrap" href="https://www.joseonlab.co.kr/" target="_blank" rel="noopener noreferrer">
+        <span class="tile">
+          <img class="wide" src="../assets/brand/logo-joseonlab.png" alt="조선혁신소" onerror="tileFallback(this,'lab')">
+        </span>
+        <span class="tile-cap">콘텐츠 협업 문의</span>
+      </a>
+    </div>
+
+    <div class="stack" style="padding-top:var(--s4)">
       <button class="btn ghost" onclick="back()">이전으로</button>
       <button class="btn ghost" onclick="restart()">처음으로</button>
-      <a class="btn ghost" href="https://chest.or.kr/base.do"
-         target="_blank" rel="noopener noreferrer">사랑의 열매로 복채 내기</a>
-      <a class="btn ghost" href="https://www.joseonlab.co.kr/"
-         target="_blank" rel="noopener noreferrer">조선혁신소 콘텐츠 협업</a>
       <p class="muted" style="text-align:center;margin-top:12px">
         오늘의 운세는 여기까지입니다. 내일 또 오세요.
       </p>
