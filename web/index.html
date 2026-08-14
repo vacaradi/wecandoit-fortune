@@ -664,9 +664,14 @@ h2{
   background:linear-gradient(180deg,rgba(4,6,12,0) 62%,rgba(4,6,12,.72) 100%);
 }
 
+/* 이 박스에서 제일 먼저 읽혀야 하는 문장 */
 .promo-desc{
-  margin-top:14px;
-  font-size:13px;line-height:1.85;color:var(--muted);
+  margin-top:var(--s3);
+  font-family:var(--font-serif);
+  font-size:clamp(21px,5.6vw,27px);
+  line-height:1.55;
+  letter-spacing:-.01em;
+  color:var(--text);
   word-break:keep-all;
 }
 .promo-cta{
