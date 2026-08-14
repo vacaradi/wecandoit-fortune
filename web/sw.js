@@ -9,7 +9,11 @@
 
 // 캐시 이름을 바꾸면 예전 것이 전부 버려진다.
 // 내용을 크게 고칠 때마다 숫자를 올린다.
-const CACHE = "wcdi-v22";
+const CACHE = "wcdi-v23";
+
+// 이 파일이 놓인 폴더. 깃허브 페이지는 주소가 / 가 아니라
+// /wecandoit-fortune/ 로 시작해서, 절대경로를 쓰면 전부 빗나간다.
+const HOME = new URL("./", self.location).pathname;
 
 /* 영상은 절대 저장하지 않는다.
  *
@@ -19,13 +23,13 @@ const CACHE = "wcdi-v22";
  * 그래서 영상은 언제나 서버에서 직접 받는다.
  */
 const ASSETS = [
-  "/assets/video/main/hero-poster.jpg",
-  "/assets/video/main/quote-poster.jpg",
-  "/assets/character/poses/wizard-orb.jpg",
-  "/assets/brand/logo.png",
-  "/assets/brand/icon-192.png",
-  "/assets/brand/icon-512.png",
-];
+  "assets/video/main/hero-poster.jpg",
+  "assets/video/main/quote-poster.jpg",
+  "assets/character/poses/wizard-orb.jpg",
+  "assets/brand/logo.png",
+  "assets/brand/icon-192.png",
+  "assets/brand/icon-512.png",
+].map((p) => HOME + p);
 
 self.addEventListener("install", (e) => {
   self.skipWaiting();
@@ -57,8 +61,9 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  // 영상과 조각 요청은 서비스워커가 손대지 않는다 (위 주석 참고)
+  // 영상과 조각 요청, 배포 번호 확인은 서비스워커가 손대지 않는다
   if (
+    url.pathname.endsWith("version.json") ||
     req.headers.has("range") ||
     req.destination === "video" ||
     req.destination === "audio" ||
@@ -67,17 +72,26 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // 화면(HTML)은 항상 서버에서 새로 받는다
+  /* 화면(HTML)은 항상 서버에서 새로 받는다.
+   *
+   * 깃허브 페이지는 "10분간 예전 것을 써라"(max-age=600) 라고 응답한다.
+   * 그냥 fetch 하면 브라우저가 그 말을 듣고 폰에 남은 예전 화면을 내준다.
+   * cache:"reload" 를 붙여야 그 저장분을 건너뛰고 서버까지 간다.
+   * 이것 때문에 폰에서만 수정이 안 보이는 일이 반복됐다.
+   */
   const isPage =
     req.mode === "navigate" ||
-    url.pathname === "/" ||
+    url.pathname === HOME ||
+    url.pathname.endsWith("/") ||
     url.pathname.endsWith(".html") ||
     url.pathname.endsWith(".webmanifest") ||
-    url.pathname.startsWith("/content/");
+    url.pathname.startsWith(HOME + "content/");
 
   if (isPage) {
     e.respondWith(
-      fetch(req).catch(() => caches.match(req).then((r) => r || caches.match("/")))
+      fetch(url.href, { cache: "reload", credentials: "same-origin" })
+        .catch(() => fetch(req))
+        .catch(() => caches.match(req).then((r) => r || caches.match(HOME)))
     );
     return;
   }

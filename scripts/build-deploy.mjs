@@ -34,16 +34,25 @@ if (existsSync(TAL_DIR)) {
 }
 if (!talismans.length) talismans = ["assets/character/poses/wizard-orb.jpg"];
 
+// ── 배포 번호 ───────────────────────────
+// 폰이 예전 화면을 붙들고 있는 사고를 막는 장치.
+// 앱은 이 번호만 확인해서 다르면 스스로 새로 받는다.
+const STAMP = (process.env.GITHUB_SHA || "").slice(0, 7) || String(Date.now());
+
 // ── index.html — 경로 치환 ──────────────
 let html = readFileSync(join(ROOT, "web", "index.html"), "utf8");
 html = html
   .replaceAll("../assets/", "assets/")
   .replaceAll("../content/", "content/")
-  
+
   // 부적 이미지 목록을 실제 파일 목록으로 갈아끼운다
   .replace(/const TALISMANS=\[[^\]]*\];/,
-           "const TALISMANS=" + JSON.stringify(talismans) + ";");
+           "const TALISMANS=" + JSON.stringify(talismans) + ";")
+
+  // 배포 번호를 심는다
+  .replace(/const BUILD="[^"]*";/, 'const BUILD="' + STAMP + '";');
 writeFileSync(join(DIST, "index.html"), html, "utf8");
+writeFileSync(join(DIST, "version.json"), JSON.stringify({ build: STAMP }), "utf8");
 
 // ── 실제로 쓰이는 파일만 복사 ────────────
 const COPY = [
