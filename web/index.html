@@ -133,10 +133,17 @@ body::-webkit-scrollbar{width:0;height:0;display:none}
 }
 
 /* ── 레이아웃 ─────────────────────────── */
+/* 홈 화면 앱으로 켜면 화면 끝까지 그림이 깔립니다(viewport-fit=cover).
+   그래서 시계·배터리가 있는 윗단과 아이폰 아래 가로줄이 글을 덮습니다.
+   기기가 알려주는 그만큼을 비워 둡니다. 일반 브라우저에서는 0이라 그대로입니다. */
 .shell{
   position:relative;z-index:10;
   max-width:600px;margin:0 auto;
-  padding:0 var(--s3) var(--s6);
+  padding:
+    calc(env(safe-area-inset-top,0px) + 14px)
+    calc(env(safe-area-inset-right,0px) + var(--s3))
+    calc(env(safe-area-inset-bottom,0px) + var(--s6))
+    calc(env(safe-area-inset-left,0px)  + var(--s3));
 }
 .screen{display:none;animation:rise var(--dur) var(--ease) both}
 .screen.on{display:block}
